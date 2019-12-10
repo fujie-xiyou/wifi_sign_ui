@@ -4,13 +4,15 @@ import { Col, Row } from 'antd';
 class HoursLine extends Component{
 
   render() {
+    const hours = [8, 10, 12, 14, 16, 18, 20, 22];
+
     return(
       <div>
         <Row type={'flex'} align={'middle'} >
           <Col span={this.props.leftColWidth}/>
           {
-            this.props.hours.map((hour) =>
-              <Col style={{textAlign: 'center'}} span={this.props.colWidth}>
+            hours.map((hour) =>
+              <Col key={hour.toString()} style={{textAlign: 'center'}} span={this.props.colWidth}>
                 {hour.toString() + ':00'}
               </Col>
             )
@@ -19,8 +21,8 @@ class HoursLine extends Component{
         <Row type={'flex'} align={'middle'}>
           <Col span={this.props.leftColWidth}/>
           {
-            this.props.hours.map((hour) =>
-              <Col style={{textAlign: 'center',
+            hours.map((hour) =>
+              <Col key={hour.toString() + '-2'} style={{textAlign: 'center',
                 borderStyle: 'none solid none solid',
                 borderWidth: '1px',
                 borderColor: 'Gainsboro'

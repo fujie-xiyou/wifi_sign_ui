@@ -95,13 +95,13 @@ export default {
           routes: [
             {
               path: '/',
-              redirect: '/welcome',
+              redirect: '/dayOnlineDetails',
             },
             {
-              path: '/welcome',
-              name: 'welcome',
+              name: '日在线详情',
               icon: 'smile',
-              component: './Welcome',
+              path: '/dayOnlineDetails',
+              component: './DayOnlineDetails',
             },
             {
               path: '/admin',
@@ -111,20 +111,10 @@ export default {
               authority: ['admin'],
             },
             {
-              path: '/products',
-              component: './products',
-            },
-            {
-              name: '分析页',
+              name: '空白页面',
               icon: 'smile',
-              path: '/dashboardanalysis',
-              component: './DashboardAnalysis',
-            },
-            {
-              name: '日在线详情',
-              icon: 'smile',
-              path: '/emptypage',
-              component: './EmptyPage',
+              path: '/onofflinestatus',
+              component: './OnOffLineStatus',
             },
             {
               component: './404',

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Rectangle from './Rectangle'
+import OnLineSegment from '@/pages/DayOnlineDetails/components/OnLineSegment';
 
 class TimeLine extends Component {
 
@@ -9,10 +10,11 @@ class TimeLine extends Component {
         <rect width={'100%'} fill={'Gainsboro'}/>
         {
           this.props.segments.map((segment) =>
-            <Rectangle key={segment.onLine.toString()}
-                       x={(segment.onLine - 7 * 60) / (17 * 60) * 100 + '%'}
-                       width={(segment.offLine - segment.onLine) / (17 * 60) * 100 + '%'}
-                       fill={'LimeGreen'}/>
+            <OnLineSegment key={segment.onLine.toString()}
+                           onLine={segment.onLine}
+                           offLine={segment.offLine}
+                           userName={this.props.userName}
+            />
           )
         }
       </svg>
