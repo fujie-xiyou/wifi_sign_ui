@@ -13,16 +13,9 @@ const plugins = [
     {
       antd: true,
       dva: {
-        hmr: true,
+        hmr: false,
       },
-      locale: {
-        // default false
-        enable: true,
-        // default zh-CN
-        default: 'zh-CN',
-        // default true, when it is true, will use `navigator.language` overwrite default
-        baseNavigator: true,
-      },
+      locale: false,
       // dynamicImport: {
       //   loadingComponent: './components/PageLoading/index',
       //   webpackChunkName: true,
@@ -35,12 +28,14 @@ const plugins = [
               importWorkboxFrom: 'local',
             },
           }
-        : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
+        : false,
+      // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
       //   include: ['dva', 'dva/router', 'dva/saga', 'dva/fetch'],
       //   exclude: ['@babel/runtime', 'netlify-lambda'],
       // },
+      dynamicImport: true,
     },
   ],
   [
@@ -69,7 +64,8 @@ export default {
   plugins,
   hash: true,
   targets: {
-    ie: 11,
+    ie: 9,
+    android: 4,
   },
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: [
@@ -111,9 +107,9 @@ export default {
               authority: ['admin'],
             },
             {
-              name: '空白页面',
+              name: '实时在线',
               icon: 'smile',
-              path: '/onofflinestatus',
+              path: '/onfflinestatus',
               component: './OnOffLineStatus',
             },
             {
@@ -179,3 +175,4 @@ export default {
   //   },
   // },
 };
+
