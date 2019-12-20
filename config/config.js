@@ -109,7 +109,7 @@ export default {
             {
               name: '实时在线',
               icon: 'smile',
-              path: '/onfflinestatus',
+              path: '/onofflinestatus',
               component: './OnOffLineStatus',
             },
             {

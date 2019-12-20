@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { host } from '@/pages/DayOnlineDetails/components/Config';
 import { Chart, Geom, Axis, Tooltip, Label, Coord } from 'bizcharts';
 
 class OnOffLineStatus extends Component {
@@ -19,7 +18,7 @@ class OnOffLineStatus extends Component {
 
 
   componentDidMount() {
-    fetch(host + '/onOffShow')
+    fetch('/all/onOffShow')
       .then(resp => resp.json())
       .then(jsonResp => {
         if (jsonResp.success) {
@@ -80,10 +79,10 @@ class OnOffLineStatus extends Component {
                   const style = {
                     fontWeight: 'bold',
                     shadowBlur: 2,
-                    shadowColor: 'rgba(0, 0, 0, .45)',
                   };
                   if (item.point.online) {
-                    style.fill = '#fff'
+                    style.fill = '#fff';
+                    style.shadowColor = 'rgba(0, 0, 0, .45)'
                   }
                   return style
                 }}

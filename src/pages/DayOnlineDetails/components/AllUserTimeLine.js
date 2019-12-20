@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import { Col, Icon, Row } from 'antd';
 import TimeLine from '@/pages/DayOnlineDetails/components/TimeLine';
-import { host } from '@/pages/DayOnlineDetails/components/Config';
 import HoursLine from '@/pages/DayOnlineDetails/components/HoursLine';
 
 class AllUserTimeLine extends Component{
@@ -29,7 +28,7 @@ class AllUserTimeLine extends Component{
 
   }
   updateAllUserTimeLine(){
-    fetch(host + '/FindSomeday?date=' + this.props.date)
+    fetch('/admin/FindSomeday?date=' + this.props.date)
       .then(resp => resp.json())
       .then(
         jsonResp => {

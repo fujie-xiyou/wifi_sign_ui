@@ -1,19 +1,13 @@
-import { Alert, Checkbox, Icon } from 'antd';
+import { Alert, Checkbox, Icon, Spin } from 'antd';
 import React, { Component } from 'react';
-import Link from 'umi/link';
 import { connect } from 'dva';
-import LoginComponents from './components/Login';
 import styles from './style.less';
-
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginComponents;
 
 @connect(({ login, loading }) => ({
   userLogin: login,
   submitting: loading.effects['login/login'],
 }))
 class Login extends Component {
-  loginForm = undefined;
-
   state = {
     type: 'account',
     autoLogin: true,
@@ -25,167 +19,77 @@ class Login extends Component {
     });
   };
 
-  handleSubmit = (err, values) => {
-    const { type } = this.state;
-
-    if (!err) {
-      const { dispatch } = this.props;
-      dispatch({
-        type: 'login/login',
-        payload: { ...values, type },
-      });
-    }
-  };
-
-  onTabChange = type => {
-    this.setState({
-      type,
-    });
-  };
-
-  onGetCaptcha = () =>
-    new Promise((resolve, reject) => {
-      if (!this.loginForm) {
-        return;
-      }
-
-      this.loginForm.validateFields(['mobile'], {}, async (err, values) => {
-        if (err) {
-          reject(err);
-        } else {
-          const { dispatch } = this.props;
-
-          try {
-            const success = await dispatch({
-              type: 'login/getCaptcha',
-              payload: values.mobile,
-            });
-            resolve(!!success);
-          } catch (error) {
-            reject(error);
-          }
-        }
-      });
-    });
-
-  renderMessage = content => (
-    <Alert
-      style={{
-        marginBottom: 24,
-      }}
-      message={content}
-      type="error"
-      showIcon
-    />
-  );
-
   render() {
-    const { userLogin, submitting } = this.props;
-    const { status, type: loginType } = userLogin;
-    const { type, autoLogin } = this.state;
-    return (
-      <div className={styles.main}>
-        <LoginComponents
-          defaultActiveKey={type}
-          onTabChange={this.onTabChange}
-          onSubmit={this.handleSubmit}
-          onCreate={form => {
-            this.loginForm = form;
-          }}
-        >
-          <Tab key="account" tab="账户密码登录">
-            {status === 'error' &&
-              loginType === 'account' &&
-              !submitting &&
-              this.renderMessage('账户或密码错误（admin/ant.design）')}
-            <UserName
-              name="userName"
-              placeholder={`${'用户名'}: admin or user`}
-              rules={[
-                {
-                  required: true,
-                  message: '请输入用户名!',
-                },
-              ]}
-            />
-            <Password
-              name="password"
-              placeholder={`${'密码'}: ant.design`}
-              rules={[
-                {
-                  required: true,
-                  message: '请输入密码！',
-                },
-              ]}
-              onPressEnter={e => {
-                e.preventDefault();
-
-                if (this.loginForm) {
-                  this.loginForm.validateFields(this.handleSubmit);
-                }
-              }}
-            />
-          </Tab>
-          <Tab key="mobile" tab="手机号登录">
-            {status === 'error' &&
-              loginType === 'mobile' &&
-              !submitting &&
-              this.renderMessage('验证码错误')}
-            <Mobile
-              name="mobile"
-              placeholder="手机号"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入手机号！',
-                },
-                {
-                  pattern: /^1\d{10}$/,
-                  message: '手机号格式错误！',
-                },
-              ]}
-            />
-            <Captcha
-              name="captcha"
-              placeholder="验证码"
-              countDown={120}
-              onGetCaptcha={this.onGetCaptcha}
-              getCaptchaButtonText="获取验证码"
-              getCaptchaSecondText="秒"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入验证码！',
-                },
-              ]}
-            />
-          </Tab>
+    const { autoLogin } = this.state;
+    const code = this.props.location.query.code;
+    if (typeof code != 'undefined') {
+      return (
+        <div className={styles.main} style={{ textAlign: 'center' }}>
+          <Spin tip={'登录中'}/>
+        </div>
+      );
+    } else {
+      return (
+        <div className={styles.main}>
+          <div id={'login_container'} style={{ textAlign: 'center' }}/>
           <div>
             <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
               自动登录
             </Checkbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-              href=""
-            >
-              忘记密码
-            </a>
           </div>
-          <Submit loading={submitting}>登录</Submit>
-          <div className={styles.other}>
-            其他登录方式
-            <Icon type="alipay-circle" className={styles.icon} theme="outlined" />
-            <Icon type="taobao-circle" className={styles.icon} theme="outlined" />
-            <Icon type="weibo-circle" className={styles.icon} theme="outlined" />
-            <Link className={styles.register} to="/user/register">
-              注册账户
-            </Link>
-          </div>
-        </LoginComponents>
-      </div>
-    );
+        </div>
+      );
+    }
+
+  }
+
+  componentDidMount() {
+    const code = this.props.location.query.code;
+    const { type } = this.state;
+    // 当URL中包含code参数时，说明是扫过码之后跳转回来的
+    // 因此页面显示登录中，使用code请求后端接口
+    if (typeof code != 'undefined') {
+      console.log('state: ', this.state, 'props: ', this.props);
+      const { dispatch } = this.props;
+      dispatch({
+        type: 'login/login',
+        payload: {
+          code,
+          type
+        }
+      });
+    }
+    // 当URL中不包含code参数时渲染二维码
+    if (typeof code == 'undefined' && typeof window.DDLogin != 'undefined') {
+      const appid = 'dingoapdvhpjlrjr2to8ay';
+      let url = encodeURIComponent(window.location.href);
+      let goto = encodeURIComponent('https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid='
+        + appid
+        + '&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=' + url)
+
+      let obj = DDLogin({
+        id: 'login_container',
+        goto: goto,
+        width: '300',
+        height: '300'
+      });
+      const handleMessage = function (event) {
+        const origin = event.origin;
+        if (origin === 'https://login.dingtalk.com') { //判断是否来自ddLogin扫码事件。
+          const loginTmpCode = event.data; //拿到loginTmpCode后就可以在这里构造跳转链接进行跳转了
+          window.location.href = 'https://oapi.dingtalk.com/connect/oauth2/sns_authorize?appid='
+            + appid
+            + '&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='
+            + url
+            + '&loginTmpCode=' + loginTmpCode;
+        }
+      };
+      if (typeof window.addEventListener != 'undefined') {
+        window.addEventListener('message', handleMessage, false);
+      } else if (typeof window.attachEvent != 'undefined') {
+        window.attachEvent('onmessage', handleMessage);
+      }
+    }
   }
 }
 

@@ -9,18 +9,16 @@ const Model = {
     status: undefined,
   },
   effects: {
-    *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      }); // Login successfully
-
-      if (response.status === 'ok') {
+    *login({ payload } , { call, put }) {
+      const response = yield call(fakeAccountLogin, payload.code);
+      if (response.success) {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: response.result,
+        }); // Login successfully
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
-
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
 
@@ -61,8 +59,8 @@ const Model = {
   },
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
-      return { ...state, status: payload.status, type: payload.type };
+      setAuthority(payload.isAdmin);
+      return { ...state, status: true};
     },
   },
 };
