@@ -1,84 +1,60 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import { Col, Icon, Row } from 'antd';
 import TimeLine from '@/pages/DayOnlineDetails/components/TimeLine';
 import HoursLine from '@/pages/DayOnlineDetails/components/HoursLine';
+import { connect } from 'dva';
 
-class AllUserTimeLine extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      result: {
-        checkInUsers: [
-          {
-            id: '',
-            name: '',
-            onOffLine: [
-              {
-                onLine: 0,
-                offLine: 0
-              }
-            ],
-            allTimeString: ''
-          }
-        ],
-        checkInPeople: 0,
-        noCheckInPeople: 0
-      }
-    }
+class AllUserTimeLine extends Component {
 
-  }
-  updateAllUserTimeLine(){
-    fetch('/admin/FindSomeday?date=' + this.props.date)
-      .then(resp => resp.json())
-      .then(
-        jsonResp => {
-          if (jsonResp.success) {
-            this.setState({
-              result: jsonResp.result
-            })
-          }
-        },
-        error => {
-          console.log('error', error)
-        }
-      )
-  }
   componentDidMount() {
-    this.updateAllUserTimeLine();
+    const { dispatch, date } = this.props;
+    dispatch({
+      type: 'timeline/getSomeday',
+      payload: {
+        date
+      }
+    });
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if(prevProps.date !== this.props.date){
-      this.updateAllUserTimeLine();
-    }
-    if (
-      prevState.result.checkInPeople !== this.state.result.checkInPeople ||
-      prevState.result.noCheckInPeople !== this.state.result.noCheckInPeople ||
-      prevState.result.noCheckInUsers !== this.state.result.noCheckInUsers
-    ){
+      const { dispatch, date } = this.props;
+      dispatch({
+        type: 'timeline/getSomeday',
+        payload: {
+          date
+        }
+      });
 
-      this.props.setCheck(this.state.result.checkInPeople, this.state.result.noCheckInPeople, this.state.result.noCheckInUsers)
     }
+    if(prevProps.somedayDetails !== this.props.somedayDetails){
+      this.props.setCheck(
+        this.props.somedayDetails.checkInPeople,
+        this.props.somedayDetails.noCheckInPeople,
+        this.props.somedayDetails.noCheckInUsers)
+    }
+
   }
 
-  getIcon(index){
-    if(index === 0){
+  getIcon(index) {
+    if (index === 0) {
       return <Icon type="crown" theme="twoTone" twoToneColor="#CD7F32"/>;
-    }
-    else if(index === 1){
+    } else if (index === 1) {
       return <Icon type="sketch"/>
-    }
-    else if(index === 2){
+    } else if (index === 2) {
       return <Icon type="trophy" theme="twoTone" twoToneColor="#B5A642"/>;
     }
     return null;
   }
+
   render() {
-    return(
+    return (
       <div>
         <HoursLine leftColWidth={2} colWidth={2}/>
+
         {
-          this.state.result.checkInUsers.map((user, index) =>
+          this.props.somedayDetails.checkInUsers &&
+          this.props.somedayDetails.checkInUsers.map((user, index) =>
             <Row key={user.id.toString()} type={'flex'} align={'middle'} gutter={[16, 32]}>
               <Col style={{ textAlign: 'center' }} span={2}>
                 {this.getIcon(index)}
@@ -97,4 +73,7 @@ class AllUserTimeLine extends Component{
     )
   }
 }
-export default AllUserTimeLine
+
+export default connect(({ timeline }) => ({
+  somedayDetails: timeline.somedayDetails
+}))(AllUserTimeLine);

@@ -2,28 +2,15 @@ import React, { Component } from 'react';
 import Select from 'antd/es/select';
 import { Divider } from 'antd';
 import LastMonthTimeLine from '@/pages/LastMonth/components/LastMonthTimeLine';
+import { connect } from 'dva';
 
 class LastMonth extends Component {
-  state = {
-    users: []
-  };
-
+  state = {};
   componentDidMount() {
-    fetch('/all/onOffShow')
-      .then(resp => resp.json())
-      .then(jsonResp => {
-        if (jsonResp.success) {
-          this.setState({
-            users: jsonResp.result
-              .sort((user1, user2) => user2['department'] - user1['department']) // 按照年级排序
-          })
-        } else {
-          console.log('请求失败', jsonResp.message)
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'timeline/getOnOffShow',
+    });
   }
 
   render() {
@@ -38,16 +25,14 @@ class LastMonth extends Component {
           onChange={(value) => {
             this.setState({selectId: value})
           }}
-          // onFocus={onFocus}
-          // onBlur={onBlur}
-          // onSearch={onSearch}
           filterOption={(input, option) =>
             option.props.children.toLowerCase()
               .indexOf(input.toLowerCase()) >= 0
           }
         >
           {
-            this.state.users.map((user) =>
+            this.props.onOffShow &&
+            this.props.onOffShow.map((user) =>
               <Option key={user.id} value={user.id}>{user.name}</Option>
             )
           }
@@ -58,6 +43,7 @@ class LastMonth extends Component {
     )
   }
 }
-
-export default LastMonth
+export default connect(({ timeline }) => ({
+  onOffShow: timeline.onOffShow
+}))(LastMonth);
 
