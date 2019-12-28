@@ -98,12 +98,6 @@ export default {
               icon: 'smile',
               path: '/dayOnlineDetails',
               component: './DayOnlineDetails',
-            },
-            {
-              path: '/admin',
-              name: 'admin',
-              icon: 'crown',
-              component: './Admin',
               authority: ['admin'],
             },
             {
@@ -111,6 +105,13 @@ export default {
               icon: 'smile',
               path: '/onofflinestatus',
               component: './OnOffLineStatus',
+            },
+            {
+              name: '近一月详情',
+              icon: 'smile',
+              path: '/lastmonth',
+              component: './LastMonth',
+              authority: ['admin'],
             },
             {
               component: './404',
@@ -175,4 +176,3 @@ export default {
   //   },
   // },
 };
-
