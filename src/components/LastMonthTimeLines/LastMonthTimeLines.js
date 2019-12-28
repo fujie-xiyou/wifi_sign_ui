@@ -4,34 +4,14 @@ import TimeLine from '@/pages/DayOnlineDetails/components/TimeLine';
 import HoursLine from '@/pages/DayOnlineDetails/components/HoursLine';
 
 class LastMonthTimeLines extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      department: 0,
-      timeSingles: [
-        {
-          date: '',
-          allTimeString: '',
-          onOffLines: [
-            {
-              onLine: 0,
-              offLine: 0
-            }
-          ],
-        }
-      ],
-      checkInPeople: 0,
-      noCheckInPeople: 0
-    }
-  }
 
   render() {
     return (
       <div>
         <HoursLine leftColWidth={2} colWidth={2}/>
         {
-          this.state.timeSingles.map((single) =>
+          this.props.timeSingles &&
+          this.props.timeSingles.map((single) =>
             <Row key={single.date} type={'flex'} align={'middle'} gutter={[16, 32]}>
               <Col style={{ textAlign: 'center' }} span={2}>
                 {single.date}

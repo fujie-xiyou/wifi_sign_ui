@@ -110,8 +110,14 @@ export default {
               name: '近一月详情',
               icon: 'smile',
               path: '/lastmonth',
-              component: './LastMonth',
+              component: './AllUserLastMonth',
               authority: ['admin'],
+            },
+            {
+              name: '我的近一月详情',
+              icon: 'smile',
+              path: '/mylastmonth',
+              component: './MyLastMonth',
             },
             {
               component: './404',

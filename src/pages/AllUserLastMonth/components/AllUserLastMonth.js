@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Select from 'antd/es/select';
 import { Divider } from 'antd';
-import LastMonthTimeLine from '@/pages/LastMonth/components/LastMonthTimeLine';
+import AllUserLastMonthTimeLine from '@/pages/AllUserLastMonth/components/AllUserLastMonthTimeLine';
 import { connect } from 'dva';
 
-class LastMonth extends Component {
+class AllUserLastMonth extends Component {
   state = {};
   componentDidMount() {
     const { dispatch } = this.props;
@@ -38,12 +38,12 @@ class LastMonth extends Component {
           }
         </Select>
         <Divider/>
-        {this.state.selectId && <LastMonthTimeLine id={this.state.selectId}/>}
+        {this.state.selectId && <AllUserLastMonthTimeLine id={this.state.selectId}/>}
       </div>
     )
   }
 }
 export default connect(({ timeline }) => ({
   onOffShow: timeline.onOffShow
-}))(LastMonth);
+}))(AllUserLastMonth);
 

@@ -1,10 +1,15 @@
-import { fetchLastMonth, fetchOnOffShow, fetchSomeday } from '@/services/timeline';
+import {
+  fetchAllUserLastMonth,
+  fetchMyLastMonth,
+  fetchOnOffShow,
+  fetchSomeday
+} from '@/services/timeline';
 
 const DayOnlineDetailsModel = {
   namespace: 'timeline',
   state: {
     somedayDetails: {},
-    lastMonth: {}
+    allUserLastMonth: {}
   },
   effects: {
     * getSomeday({ payload }, { call, put }) {
@@ -14,14 +19,21 @@ const DayOnlineDetailsModel = {
         payload: response.result
       })
     },
-    * getLastMonth({ payload }, { call, put }) {
-      const response = yield call(fetchLastMonth, payload.id);
+    * getAllUserLastMonth({ payload }, { call, put }) {
+      const response = yield call(fetchAllUserLastMonth, payload.id);
       yield put({
-        type: 'saveLastMonth',
+        type: 'saveAllUserLastMonth',
         payload: response.result
       })
     },
-    * getOnOffShow(_, {call, put}){
+    * getMyLastMonth(_, { call, put }) {
+      const response = yield call(fetchMyLastMonth);
+      yield put({
+        type: 'saveMyLastMonth',
+        payload: response.result
+      })
+    },
+    * getOnOffShow(_, { call, put }) {
       const response = yield call(fetchOnOffShow);
       yield put({
         type: 'saveOnOffShow',
@@ -36,14 +48,20 @@ const DayOnlineDetailsModel = {
         somedayDetails: payload
       }
     },
-    saveLastMonth(state, { payload }) {
+    saveAllUserLastMonth(state, { payload }) {
       return {
         ...state,
-        lastMonth: payload
+        allUserLastMonth: payload
       }
     },
-    saveOnOffShow(state, {payload}){
-      return{
+    saveMyLastMonth(state, { payload }) {
+      return {
+        ...state,
+        myLastMonth: payload
+      }
+    },
+    saveOnOffShow(state, { payload }) {
+      return {
         ...state,
         onOffShow: payload.sort((user1, user2) => user2['department'] - user1['department'])
       }
